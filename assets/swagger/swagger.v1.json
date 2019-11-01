@@ -1,0 +1,43 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "This documentation describes the GoT API.",
+    "title": "GoT API.",
+    "version": "1.0.0"
+  },
+  "basePath": "/api",
+  "paths": {
+    "/v1/ping": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Echo pong to a ping",
+        "operationId": "ping",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PongResponse"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "PongResponse": {
+      "description": "PongResponse represent a pong response"
+    }
+  }
+}
