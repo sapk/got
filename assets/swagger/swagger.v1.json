@@ -34,6 +34,23 @@
         }
       }
     },
+    "/v1/tilejson": {
+      "get": {
+        "produces": [
+          "text/plain"
+        ],
+        "summary": "Return tilejson definition",
+        "operationId": "tilejson",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TileJSON"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/v1/{id}/{z}/{x}/{y}.png": {
       "get": {
         "produces": [

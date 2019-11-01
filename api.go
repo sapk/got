@@ -74,6 +74,26 @@ func api(webLogger *zerolog.Logger, c *Client) func(r chi.Router) {
 			}
 		})
 
+		r.Get("/v1/tilejson", func(w http.ResponseWriter, r *http.Request) {
+			// swagger:operation GET /v1/tilejson tilejson
+			// ---
+			// summary: Return tilejson definition
+			// produces:
+			// - text/plain
+			// responses:
+			//   "500":
+			//     description: Internal Server Error
+			//   "200":
+			//     "$ref": "#/responses/TileJSON"
+
+			//TODO more details
+			w.Header().Set("Content-Type", "application/json")
+			_, err := w.Write([]byte(`{"tilejson": "2.2.0","maxzoom": 5,"tiles": ["http://localhost:3000/api/v1/default/{z}/{x}/{y}.png"]}`))
+			if err != nil {
+				webLogger.Warn().Err(err).Msg("Fail to send tilejson")
+			}
+		})
+
 		//TODO cache-control Last-Modified ETag
 		r.Get("/v1/{id}/{z:[0-9]+}/{x:[0-9]+}/{y:[0-9]+}.png", func(w http.ResponseWriter, r *http.Request) {
 			// swagger:operation GET /v1/{id}/{z}/{x}/{y}.png getTile
