@@ -18,6 +18,8 @@ package main
 //go:generate go run -mod=vendor github.com/go-swagger/go-swagger/cmd/swagger generate spec -o ./assets/swagger/swagger.v1.json
 
 import (
+	"bytes"
+	"compress/gzip"
 	"net/http"
 	"strconv"
 
@@ -73,7 +75,7 @@ func api(webLogger *zerolog.Logger, c *Client) func(r chi.Router) {
 			}
 		})
 
-		//TODO cache-control
+		//TODO cache-control Last-Modified ETag
 		r.Get("/v1/{id}/{z:[0-9]+}/{x:[0-9]+}/{y:[0-9]+}.png", func(w http.ResponseWriter, r *http.Request) {
 			// swagger:operation GET /v1/{id}/{z}/{x}/{y}.png getTile
 			// ---
@@ -109,8 +111,6 @@ func api(webLogger *zerolog.Logger, c *Client) func(r chi.Router) {
 
 			//TODO hanlde id ?
 
-			w.Header().Set("Content-Type", "image/png")
-
 			//TODO return http error 400 bad request
 			//TODO retrieve bound of mbtile + return 404 not foudn/out of bound
 			z, err := strconv.Atoi(chi.URLParam(r, "z"))
@@ -126,11 +126,29 @@ func api(webLogger *zerolog.Logger, c *Client) func(r chi.Router) {
 				webLogger.Warn().Err(err).Msg("Invalid y value")
 			}
 
-			b, err := c.GetTile(z, x, y)
+			buffer, err := c.GetTile(z, x, y)
 			if err != nil {
 				webLogger.Warn().Err(err).Msg("Fail to find tile")
 			}
-			_, err = w.Write(b)
+			contentType := http.DetectContentType(buffer)
+			if contentType == "application/x-gzip" {
+				uBuffer, err := gzip.NewReader(bytes.NewBuffer(buffer))
+				if err != nil {
+					webLogger.Warn().Msgf("Fail to decode compressed data")
+				} else {
+					buf := new(bytes.Buffer)
+					buf.ReadFrom(uBuffer)
+					buffer = buf.Bytes()
+					contentType = http.DetectContentType(buffer)
+				}
+				//w.Header().Set("Content-Type", "application/x-protobuf")
+				//w.Header().Set("Content-Encoding", "gzip")
+			}
+			//else {
+			w.Header().Set("Content-Type", contentType)
+			//}
+			//TODO Content-Encoding
+			_, err = w.Write(buffer)
 			if err != nil {
 				webLogger.Warn().Err(err).Msg("Fail to send tile")
 			}
