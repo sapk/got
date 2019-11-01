@@ -35,14 +35,17 @@ func web(debug bool, c *Client, port int) {
 		})
 	*/
 
-	r.Route("/api", api(webLogger))
+	r.Route("/api", api(webLogger, c))
 
 	r.Mount("/swagger", http.StripPrefix("/swagger/", http.FileServer(swagger.Swagger)))
 	r.Mount("/", http.FileServer(webapp.WebApp))
 
 	webLogger.Info().Msgf("Listening on :%d ...", port)
 	//webLogger.Info().Msgf(docgen.JSONRoutesDoc(r))
-	http.ListenAndServe(fmt.Sprintf(":%d", port), r)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), r)
+	if err != nil {
+		webLogger.Fatal().Err(err).Msgf("Fail to start webserver")
+	}
 }
 
 // RequestLogger returns a logger handler using a custom LogFormatter.

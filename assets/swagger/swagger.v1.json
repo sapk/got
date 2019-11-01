@@ -20,7 +20,7 @@
     "/v1/ping": {
       "get": {
         "produces": [
-          "application/json"
+          "text/plain"
         ],
         "summary": "Echo pong to a ping",
         "operationId": "ping",
@@ -33,9 +33,59 @@
           }
         }
       }
+    },
+    "/v1/{id}/{z}/{x}/{y}.png": {
+      "get": {
+        "produces": [
+          "image/png"
+        ],
+        "summary": "Map tile",
+        "operationId": "getTile",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "the tile id type (currently ignored)",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "the zoom",
+            "name": "z",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "the x coord",
+            "name": "x",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "description": "the y coord",
+            "name": "y",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/MapTile"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   },
   "responses": {
+    "MapTile": {
+      "description": "MapTile represent a png map tile response"
+    },
     "PongResponse": {
       "description": "PongResponse represent a pong response"
     }

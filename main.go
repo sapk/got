@@ -2,24 +2,20 @@ package main
 
 import (
 	"flag"
+	"log"
 )
 
 func main() {
-	debugFlag := flag.Bool("debug", false, "sets log level to debug")
+	debugFlag := flag.Bool("v", false, "sets log level to verbose/debug")
 	//TODO helpFlag := flag.Bool("help", false, "display help message (TODO)")
 	portFlag := flag.Int("p", 3000, "port to listen")
 	flag.Parse()
 
-	c := tileClient(*debugFlag)
+	args := flag.Args()
+	if len(args) != 1 {
+		log.Fatal("Need one and only one arg for .mbtiles file path.")
+	}
+	c := tileClient(*debugFlag, args[0])
 
 	web(*debugFlag, c, *portFlag)
-}
-
-//Client client ot parse and access mbtile file
-type Client struct {
-}
-
-func tileClient(debug bool) *Client {
-	//TODO
-	return &Client{}
 }

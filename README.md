@@ -14,10 +14,10 @@ A map tile server implemented in go
 Use mage helper to run tasks:
 ```
 go run -mod=vendor mage.go -l
-go run -mod=vendor mage.go webapp:build
-go run -mod=vendor mage.go generate
-go run -mod=vendor mage.go build
+go run -mod=vendor mage.go webapp:build generate build
  -- OR --
 alias m="go run -mod=vendor mage.go"
+m webapp:build generate build
+ -- For more --
 m -l
 ```
