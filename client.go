@@ -3,13 +3,49 @@ package main
 import (
 	"fmt"
 	"log"
-
-	_ "github.com/mattn/go-sqlite3"
+	
+	//"github.com/consbio/mbtileserver/mbtiles"
 	"github.com/rs/zerolog"
 	"xorm.io/core"
 	"xorm.io/xorm"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
+/*
+//Client client ot parse and access mbtile file
+type Client struct {
+	DB *mbtiles.DB
+}
+
+func tileClient(debug bool, fPath string) *Client {
+	dbLogger := setupLogger(debug, "database")
+	db, err := initDB(dbLogger, fPath)
+	if err != nil {
+		dbLogger.Fatal().Err(err).Msg("Fail to read mbtiles file")
+	}
+	return &Client{DB: db}
+}
+
+//initDB start the database connection and settings
+func initDB(logger *zerolog.Logger, filepath string) (*mbtiles.DB, error) {
+	logger.Debug().Msgf("Opening file '%s' ...", filepath)
+	db, err := mbtiles.NewDB(filepath)
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
+}
+
+//GetTile retrive a tile from database
+func (c *Client) GetTile(z, x, y int) ([]byte, error) {
+	var data []byte
+	yCorr := (1 << uint64(z)) - 1 - uint64(y)
+	err := c.DB.ReadTile(uint8(z), uint64(x), yCorr, &data)
+	return data, err
+}
+//*/
+//*
 //TODO rename to TileReader
 
 //Client client ot parse and access mbtile file
@@ -152,3 +188,5 @@ func (l *logger) ShowSQL(show ...bool) {
 func (l *logger) IsShowSQL() bool {
 	return true
 }
+
+//*/
