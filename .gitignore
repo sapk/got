@@ -1,3 +1,4 @@
 /got
 *_vfsdata.go
 *.mbtiles
+build/

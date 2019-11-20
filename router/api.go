@@ -183,32 +183,7 @@ func api(webLogger *zerolog.Logger, c *mbtiles.Client) func(r chi.Router) {
 			} else {
 				w.Header().Set("Content-Type", contentType)
 			}
-			/*
-				contentType := http.DetectContentType(buffer)
-				if contentType == "application/x-gzip" {
-					uBuffer, err := gzip.NewReader(bytes.NewBuffer(buffer))
-					if err != nil {
-						webLogger.Warn().Msgf("Fail to decode compressed data")
-					} else {
-						buf := new(bytes.Buffer)
-						buf.ReadFrom(uBuffer)
-						buffer = buf.Bytes()
-						contentType = http.DetectContentType(buffer)
-					}
-					//w.Header().Set("Content-Type", "application/x-protobuf")
-					//w.Header().Set("Content-Encoding", "gzip")
-				}
-				//else {
-				w.Header().Set("Content-Type", contentType)
-				//}
-				//TODO Content-Encoding
-			//*/
-			/*
-				w.Header().Set("Content-Type", c.DB.ContentType())
-				if c.DB.TileFormat() == mbtiles.PBF {
-					w.Header().Set("Content-Encoding", "gzip")
-				}
-				//*/
+
 			_, err = w.Write(buffer)
 			if err != nil {
 				webLogger.Warn().Err(err).Msg("Fail to send tile")
