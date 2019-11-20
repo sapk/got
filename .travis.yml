@@ -18,7 +18,7 @@ install:
 
 script:
   - go generate -mod=vendor ./...
-  - golangci-lint run --enable-all -D gochecknoglobals -D godox -D wsl -D lll
+  - golangci-lint run --enable-all -D funlen -D gomnd
   - go build -mod=vendor ./
   - "./got -h || echo ''"
 

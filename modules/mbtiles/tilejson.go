@@ -12,7 +12,6 @@ import (
 
 //GetTileJSON generate a TileJSON from database
 func (c *Client) GetTileJSON() ([]byte, error) {
-
 	metas, err := c.GetMetadataList()
 	if err != nil {
 		return nil, errors.Wrap(err, "metadata read failed")

@@ -46,7 +46,6 @@ type MapTile struct {
 
 func api(webLogger *zerolog.Logger, c *mbtiles.Client) func(r chi.Router) {
 	return func(r chi.Router) {
-
 		//TODO remove only for dev
 		// Basic CORS
 		cors := cors.New(cors.Options{
@@ -157,7 +156,7 @@ func api(webLogger *zerolog.Logger, c *mbtiles.Client) func(r chi.Router) {
 			//     "$ref": "#/responses/MapTile"
 
 			//TODO return http error 400 bad request
-			//TODO retrieve bound of mbtile + return 404 not foudn/out of bound
+			//TODO retrieve bound of mbtile + return 404 not found/out of bound
 			z, err := strconv.Atoi(chi.URLParam(r, "z"))
 			if err != nil {
 				webLogger.Warn().Err(err).Msg("Invalid z value")

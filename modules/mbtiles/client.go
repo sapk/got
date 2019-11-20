@@ -6,6 +6,7 @@ import (
 	"github.com/rs/zerolog"
 	"xorm.io/xorm"
 
+	//Needed for opening mbtiles
 	_ "github.com/mattn/go-sqlite3"
 
 	"github.com/sapk/got/modules/log"
@@ -68,7 +69,10 @@ func NewClient(debug bool, fPath string) *Client {
 
 	//Simple cache for metadata
 	cacher := xorm.NewLRUCacher(xorm.NewMemoryStore(), 100)
-	db.MapCacher(&Metadata{}, cacher)
+	err = db.MapCacher(&Metadata{}, cacher)
+	if err != nil {
+		dbLogger.Fatal().Err(err).Msg("Fail to setup metadata mbtiles cache")
+	}
 
 	return &Client{DB: db}
 }
