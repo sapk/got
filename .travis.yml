@@ -13,12 +13,14 @@ before_install:
   - GO111MODULE=off go get -u -v github.com/golangci/golangci-lint/cmd/golangci-lint
   - export PATH="$GOPATH/bin:$PATH"
 
+install:  
+  - go mod vendor
 
 script:
   - go generate -mod=vendor ./...
   - golangci-lint run --enable-all -D gochecknoglobals -D godox -D wsl -D lll
   - go build -mod=vendor ./
-  - "./rtme-browser -h || echo ''"
+  - "./got -h || echo ''"
 
 before_deploy:
   - gox -osarch="darwin/amd64" -ldflags "-s -w" -output="build/{{.Dir}}-{{.OS}}-{{.Arch}}"
