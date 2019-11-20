@@ -13,18 +13,19 @@
 //     - application/json
 //
 // swagger:meta
-package main
+package router
 
-//go:generate go run -mod=vendor github.com/go-swagger/go-swagger/cmd/swagger generate spec -o ./assets/swagger/swagger.v1.json
+//go:generate go run -mod=vendor github.com/go-swagger/go-swagger/cmd/swagger generate spec -o ../assets/swagger/swagger.v1.json
 
 import (
 	"net/http"
 	"strconv"
 
-	//"github.com/consbio/mbtileserver/mbtiles"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/rs/zerolog"
+
+	"github.com/sapk/got/modules/mbtiles"
 )
 
 // PongResponse represent a pong response
@@ -43,7 +44,7 @@ type MapTile struct {
 	Body string //TODO the real content of png file
 }
 
-func api(webLogger *zerolog.Logger, c *Client) func(r chi.Router) {
+func api(webLogger *zerolog.Logger, c *mbtiles.Client) func(r chi.Router) {
 	return func(r chi.Router) {
 
 		//TODO remove only for dev
@@ -74,6 +75,31 @@ func api(webLogger *zerolog.Logger, c *Client) func(r chi.Router) {
 			}
 		})
 
+		r.Get("/v1/style.json", func(w http.ResponseWriter, r *http.Request) {
+			// swagger:operation GET /v1/style.json style.json
+			// ---
+			// summary: Return style.json definition
+			// produces:
+			// - text/plain
+			// responses:
+			//   "500":
+			//     description: Internal Server Error
+			//   "200":
+			//     "$ref": "#/responses/style.json"
+
+			json, err := c.GetStyle()
+			if err != nil {
+				webLogger.Warn().Err(err).Msg("Fail to generate map style")
+				http.Error(w, err.Error(), 500)
+			}
+
+			w.Header().Set("Content-Type", "application/json")
+			_, err = w.Write(json)
+			if err != nil {
+				webLogger.Warn().Err(err).Msg("Fail to send map style")
+			}
+		})
+
 		r.Get("/v1/tilejson", func(w http.ResponseWriter, r *http.Request) {
 			// swagger:operation GET /v1/tilejson tilejson
 			// ---
@@ -86,27 +112,29 @@ func api(webLogger *zerolog.Logger, c *Client) func(r chi.Router) {
 			//   "200":
 			//     "$ref": "#/responses/TileJSON"
 
-			//TODO more details
+			json, err := c.GetTileJSON()
+			if err != nil {
+				webLogger.Warn().Err(err).Msg("Fail to generate TileJSON")
+				http.Error(w, err.Error(), 500)
+			}
+
 			w.Header().Set("Content-Type", "application/json")
-			_, err := w.Write([]byte(`{"tilejson": "2.2.0","maxzoom": 5,"tiles": ["http://localhost:3000/api/v1/default/{z}/{x}/{y}.png"]}`))
+			_, err = w.Write(json)
 			if err != nil {
 				webLogger.Warn().Err(err).Msg("Fail to send tilejson")
 			}
 		})
 
 		//TODO cache-control Last-Modified ETag
-		r.Get("/v1/{id}/{z:[0-9]+}/{x:[0-9]+}/{y:[0-9]+}.png", func(w http.ResponseWriter, r *http.Request) {
-			// swagger:operation GET /v1/{id}/{z}/{x}/{y}.png getTile
+		r.Get("/v1/tiles/{z:[0-9]+}/{x:[0-9]+}/{y:[0-9]+}.{ext}", func(w http.ResponseWriter, r *http.Request) {
+			// swagger:operation GET /v1/{z}/{x}/{y}.{ext} getTile
 			// ---
 			// summary: Map tile
 			// produces:
 			// - image/png
+			// - application/vnd.mapbox-vector-tile
+			// - application/x-protobuf
 			// parameters:
-			// - name: id
-			//   in: path
-			//   description: the tile id type (currently ignored)
-			//   type: string
-			//   required: true
 			// - name: z
 			//   in: path
 			//   description: the zoom
@@ -127,8 +155,6 @@ func api(webLogger *zerolog.Logger, c *Client) func(r chi.Router) {
 			//     description: Internal Server Error
 			//   "200":
 			//     "$ref": "#/responses/MapTile"
-
-			//TODO hanlde id ?
 
 			//TODO return http error 400 bad request
 			//TODO retrieve bound of mbtile + return 404 not foudn/out of bound

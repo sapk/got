@@ -1,4 +1,4 @@
-package main
+package log
 
 import (
 	"os"
@@ -7,7 +7,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func setupLogger(debug bool, module string) *zerolog.Logger {
+//NewLogger create a new logger with a module
+func NewLogger(debug bool, module string) *zerolog.Logger {
 	// Default level for this example is info, unless debug flag is present
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	if debug {

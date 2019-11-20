@@ -51,21 +51,16 @@
         }
       }
     },
-    "/v1/{id}/{z}/{x}/{y}.png": {
+    "/v1/{z}/{x}/{y}.{ext}": {
       "get": {
         "produces": [
-          "image/png"
+          "image/png",
+          "application/vnd.mapbox-vector-tile",
+          "application/x-protobuf"
         ],
         "summary": "Map tile",
         "operationId": "getTile",
         "parameters": [
-          {
-            "type": "string",
-            "description": "the tile id type (currently ignored)",
-            "name": "id",
-            "in": "path",
-            "required": true
-          },
           {
             "type": "integer",
             "description": "the zoom",

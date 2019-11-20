@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"log"
+
+	"github.com/sapk/got/modules/mbtiles"
+	"github.com/sapk/got/router"
 )
 
 func main() {
@@ -15,7 +18,7 @@ func main() {
 	if len(args) != 1 {
 		log.Fatal("Need one and only one arg for .mbtiles file path.")
 	}
-	c := tileClient(*debugFlag, args[0])
+	c := mbtiles.NewClient(*debugFlag, args[0])
 
-	web(*debugFlag, c, *portFlag)
+	router.Setup(*debugFlag, c, *portFlag)
 }

@@ -3,6 +3,7 @@ module github.com/sapk/got
 go 1.13
 
 require (
+	github.com/gdey/errors v0.0.0-20190426172550-8ebd5bc891fb
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/cors v1.0.0
 	github.com/go-openapi/analysis v0.19.6 // indirect
@@ -16,6 +17,7 @@ require (
 	github.com/mailru/easyjson v0.7.0 // indirect
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/pelletier/go-toml v1.6.0 // indirect
+	github.com/pkg/errors v0.8.1
 	github.com/rs/zerolog v1.16.0
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20181202132449-6a9ea43bcacd
