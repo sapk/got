@@ -1,0 +1,30 @@
+language: go
+addons:
+  apt:
+    packages:
+    - upx-ucl
+go:
+- '1.13'
+env:
+- GO111MODULE=on
+
+before_install:
+  - GO111MODULE=off go get -u -v github.com/mitchellh/gox
+  - GO111MODULE=off go get -u -v github.com/golangci/golangci-lint/cmd/golangci-lint
+  - export PATH="$GOPATH/bin:$PATH"
+
+
+script:
+  - go generate ./...
+  - golangci-lint run --enable-all -D gochecknoglobals -D godox -D wsl -D lll
+  - go build ./
+  - "./rtme-browser -h || echo ''"
+
+before_deploy:
+  - gox -osarch="darwin/amd64" -ldflags "-s -w" -output="build/{{.Dir}}-{{.OS}}-{{.Arch}}"
+  - gox -osarch="linux/amd64" -ldflags "-s -w" -output="build/{{.Dir}}-{{.OS}}-{{.Arch}}"
+  - gox -osarch="linux/386" -ldflags "-s -w" -output="build/{{.Dir}}-{{.OS}}-{{.Arch}}"
+  - gox -osarch="linux/arm" -ldflags "-s -w" -output="build/{{.Dir}}-{{.OS}}-{{.Arch}}"
+  - gox -osarch="windows/amd64" -ldflags "-s -w" -output="build/{{.Dir}}-{{.OS}}-{{.Arch}}"
+  - gox -osarch="windows/386" -ldflags "-s -w" -output="build/{{.Dir}}-{{.OS}}-{{.Arch}}"
+  - upx -9 ./build/got-{windows,linux}-*
