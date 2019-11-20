@@ -15,9 +15,9 @@ before_install:
 
 
 script:
-  - go generate ./...
+  - go generate -mod=vendor ./...
   - golangci-lint run --enable-all -D gochecknoglobals -D godox -D wsl -D lll
-  - go build ./
+  - go build -mod=vendor ./
   - "./rtme-browser -h || echo ''"
 
 before_deploy:
@@ -28,3 +28,13 @@ before_deploy:
   - gox -osarch="windows/amd64" -ldflags "-s -w" -output="build/{{.Dir}}-{{.OS}}-{{.Arch}}"
   - gox -osarch="windows/386" -ldflags "-s -w" -output="build/{{.Dir}}-{{.OS}}-{{.Arch}}"
   - upx -9 ./build/got-{windows,linux}-*
+
+deploy:
+  provider: releases
+  api_key:
+    secure: S9i68fCGz8OzIMl4WOG+kjLTBJMzTdDqaEX6ZwGnaW/n+HQYVgdW96HIOs0h18uLUqwhJPTexVcAhaJgKLQnNS2k84sv2W1103UpJeLXJ9AqAdhAMLdjsxT7sycjIoN04EQ4hg5xFzN9Y6gCsj3PfjynSYCIBXqHE0g7jkG63pO9TkB1KVa8mBPnGGzvirRDcqX0e+ZD5XLwDGNyAqjXWDO9c8YRig0SbHdCeF5qjNhKYDJZjgyWp7cOKYcMEeRqu335iTjkr/qeu6eNWzliJ7+2ohee7LK7UlSM+q7c2DCrSJJt5xowgOWDV9qF6+LWdfHpNhNOYlAGLXR9lHOQ2p996AeLvJWgkmx2cl64w8/ADG8W6BdLkTMnv/WOtacU6CpmtQpFSXBZiXGRt/eEUt6c0o35L1QhrFCICStAVxbMB0zLCiD8UEW+aZBrfZFjzCgPAVevEtagRyp2J7+doA/mRLr8nIWgHItLGMCA4RCkns3jcv5qSCN9jsFYi47WvuE7dpGFXKIxeqyF4pMAvZeTkCI50i5XW7bHpspmAsRaHRHpMFeiIJ3Snr7h7xrn/wSIIYD2N/wM64px4fZD74D1GPli3zo3cQkruS96ohf9ewntx0UYiFl9AoaRNlbvNrkF3CevdLUivz39n92RuVimONUp1TWXwSEWu2+dOy4=
+  file: build/*
+  file_glob: true
+  skip_cleanup: true
+  on:
+    tags: true
