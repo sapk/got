@@ -11,7 +11,6 @@ import (
 
 //GetStyle generate a map style from database
 func (c *Client) GetStyle() ([]byte, error) {
-
 	metas, err := c.GetMetadataList()
 	if err != nil {
 		return nil, errors.Wrap(err, "metadata read failed")

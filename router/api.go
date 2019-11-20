@@ -188,6 +188,5 @@ func api(webLogger *zerolog.Logger, c *mbtiles.Client) func(r chi.Router) {
 				webLogger.Warn().Err(err).Msg("Fail to send tile")
 			}
 		})
-
 	}
 }
