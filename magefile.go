@@ -57,16 +57,3 @@ func (Deps) Update() error {
 	}
 	return sh.RunV(gocmd, "mod", "tidy")
 }
-
-type Webapp mg.Namespace
-
-// Build compile the web app
-func (Webapp) Build() error {
-	//TODO var goInstall = sh.RunCmd("go", "install") goInstall("github.com/gohugo/hugo")
-	return sh.RunV("yarn", "--cwd", "./assets/webapp", "build", "--emoji")
-}
-
-// Serve compile the web app
-func (Webapp) Serve() error {
-	return sh.RunV("yarn", "--cwd", "./assets/webapp", "serve", "--emoji")
-}
