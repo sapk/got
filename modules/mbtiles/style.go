@@ -7,9 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-//From:
-// - https://github.com/mapbox/tilejson-spec/tree/master/2.2.0
-// - https://github.com/mapbox/mbtiles-spec/blob/master/1.3/spec.md
+//From: mapbox api
 
 //GetStyle generate a map style from database
 func (c *Client) GetStyle() ([]byte, error) {
